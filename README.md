@@ -33,10 +33,11 @@ To overcome this issue you may follow the implementation usage above from steps 
 
 	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerCount, int)
 	DiscordsApp.GetApp().UpdateStage(StatusType.GameState, GameState.None)
-	DiscordsApp.GetApp().UpdateStage(StatusType.Details, string)
 	DiscordsApp.GetApp().UpdateStage(StatusType.Party, int, int)
 	DiscordsApp.GetApp().UpdateStage(StatusType.SmallImageText, string)
 	DiscordsApp.GetApp().UpdateStage(StatusType.LargeImageText, string)
+	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerName, string)
+	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerLevel, string)
 
 # If used incorrectly the extension will not work.
 

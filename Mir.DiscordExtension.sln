@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mir.DiscordExtension", "Mir.DiscordExtension\Mir.DiscordExtension.csproj", "{2919419E-C616-4FA7-8998-AAD8022B1896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mir.DiscordTests", "Mir.DiscordTests\Mir.DiscordTests.csproj", "{A08AC075-07B8-4BDA-B443-908EE7F78A5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2919419E-C616-4FA7-8998-AAD8022B1896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2919419E-C616-4FA7-8998-AAD8022B1896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2919419E-C616-4FA7-8998-AAD8022B1896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2919419E-C616-4FA7-8998-AAD8022B1896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A08AC075-07B8-4BDA-B443-908EE7F78A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A08AC075-07B8-4BDA-B443-908EE7F78A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A08AC075-07B8-4BDA-B443-908EE7F78A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A08AC075-07B8-4BDA-B443-908EE7F78A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61E2D6E9-5894-453F-9333-DBBCB227B555}
+	EndGlobalSection
+EndGlobal

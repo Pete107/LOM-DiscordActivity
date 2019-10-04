@@ -61,16 +61,6 @@ namespace Mir.DiscordExtension.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] discord_game_sdk {
-            get {
-                object obj = ResourceManager.GetObject("discord_game_sdk", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid status Type.
         /// </summary>
         internal static string DiscordsApp_UpdateStage_Invalid_status_Type {

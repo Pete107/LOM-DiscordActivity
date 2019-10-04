@@ -7,7 +7,7 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 [Discords Game SDK](https://discordapp.com/developers/docs/game-sdk/sdk-starter-guide)
 
 
-# Implementation Usage:
+# Implementation Usage.
 	1a) Get the instance of the Extension -> DiscordsApp.GetApp()
 	
 	1b) Place the DiscordsApp.Update() within a lifetime loop of the application, 
@@ -29,7 +29,7 @@ By default the extension will only detect a Discord Process upon launching
 so if a user loads Discord post launch of the Client it will not process.
 To overcome this issue you may follow the implementation usage above from steps 3 to 4.
 
-# The Parameters mentioned in step 4 are as followed:
+# The Parameters mentioned in step 4 are as followed.
 
 	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerCount, int)
 	DiscordsApp.GetApp().UpdateStage(StatusType.GameState, GameState.None)
@@ -58,7 +58,7 @@ The default structure is as follows:
 
 Setting EnableDiscordActivity will prevent the extension from processing. (won't do anything)
 
-# Details Formatting :
+# Details Formatting.
 
 {0} is the Users name if they did not opt to hide it.
 

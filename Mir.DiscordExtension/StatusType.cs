@@ -4,9 +4,10 @@
     {
         PlayerCount,
         GameState,
-        Details,
         Party,
         SmallImageText,
-        LargeImageText
+        LargeImageText,
+        PlayerName,
+        PlayerLevel,
     }
 }

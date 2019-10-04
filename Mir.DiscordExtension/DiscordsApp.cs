@@ -91,14 +91,10 @@ namespace Mir.DiscordExtension
                 case StatusType.GameState:
                     _currentState.UpdateState((GameState)inputs[0]);
                     break;
-                case StatusType.Details:
-                    _currentState.UpdateDetails((string)inputs[0]);
-                    break;
                 case StatusType.Party:
                     _currentState.UpdateParty((int)inputs[0], (int)inputs[1]);
                     _partySize.CurrentSize = _currentState.CurrentPartyCount;
                     _partySize.MaxSize = _currentState.MaxPartyCount;
-
                     break;
                 case StatusType.SmallImageText:
                     _currentState.UpdateSmallImageText((string)inputs[0]);
@@ -107,6 +103,12 @@ namespace Mir.DiscordExtension
                 case StatusType.LargeImageText:
                     _currentState.UpdateLargeImageText((string)inputs[0]);
                     _assets.LargeText = _currentState.LargeImageText;
+                    break;
+                case StatusType.PlayerName:
+                    _currentState.UpdatePlayerName((string)inputs[0]);
+                    break;
+                case StatusType.PlayerLevel:
+                    _currentState.UpdatePlayerLevel((int)inputs[0]);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(statusType), statusType, Resources.DiscordsApp_UpdateStage_Invalid_status_Type);
@@ -120,6 +122,9 @@ namespace Mir.DiscordExtension
         {
             try
             {
+                _currentState.Details = string.Format(_settings.DetailsFormatting, _currentState.PlayersName.Length > 0 && _settings.DisplayCharacterName ? _currentState.PlayersName + " " : "", 
+                    _currentState.PlayerLevel != - 1 ? $"Level: {_currentState.PlayerLevel} " : "",
+                    _currentState.PlayerCount != -1 ? $"UC:{_currentState.PlayerCount}" : "");
                 var activity = new Activity
                 {
                     State = _currentState.State == GameState.Playing ? " Solo" : 

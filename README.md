@@ -1,6 +1,11 @@
 # LOM-Discord-Extension
 An extension which can be hooked into a Client and output as Activity on Discord.
 
+# Prerequisites
+Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
+	
+[Discords Game SDK](https://discordapp.com/developers/docs/game-sdk/sdk-starter-guide)
+
 
 # Implementation Usage:
 	1a) Get the instance of the Extension -> DiscordsApp.GetApp()

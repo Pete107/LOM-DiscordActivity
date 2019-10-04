@@ -18,6 +18,14 @@ namespace Mir.DiscordTests
             discord.HasException += DiscordOnHasException;
             discord.Stopped += DiscordOnStopped;
             discord.StartApp();
+            Assert.AreEqual(true, discord.Running);
+
+            var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+            while (!HasHit && DateTime.UtcNow < expireTime)
+            {
+                
+            }
+            Assert.AreEqual(true, HasHit);
         }
         [TestMethod]
         public void TestDiscordActivity()
@@ -30,12 +38,12 @@ namespace Mir.DiscordTests
             discord.Stopped += DiscordOnStopped;
             discord.ActivityCallBack += DiscordOnActivityCallBack;
             discord.StartApp();
-            discord.UpdateStage(StatusType.Details, "Testing Activity");
-            discord.UpdateStage(StatusType.GameState, GameState.PlayingGroup);
-            discord.UpdateStage(StatusType.PlayerCount, 1);
-            discord.UpdateStage(StatusType.Party, 1, 5);
+            //Initialize a Mock of playing in a group see Mock Activity for options.
+            MockActivity.SetMockGroupActivity(discord);
+            //Send to update Queue
             discord.UpdateActivity();
             var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+            //Create a loop to process the call-backs until there is a response (or it reaches the expire time)
             while (!HasHit && DateTime.UtcNow < expireTime)
             {
                 discord.Update();
@@ -65,6 +73,7 @@ namespace Mir.DiscordTests
         private void DiscordOnStarted(object sender, EventArgs e)
         {
             Console.WriteLine("Discord Started");
+            HasHit = true;
         }
 
         private void DiscordOnStartFailure(object sender, EventArgs e)

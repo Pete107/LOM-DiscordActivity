@@ -40,6 +40,12 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 	        private void DiscordOnStartedActivity(object sender, EventArgs e) =>
             		DiscordsApp.GetApp().StartLoop();
 			
+	5) Initialise the State, Example found further below -> DiscordsApp.GetApp().UpdateState(StatusType, parameters)
+  
+	6) Push the state to the Activity queue -> DiscordsApp.GetApp().UpdateActivity()
+	
+	7) To Stop the process set Stop to true, this will stop and reset the application.
+			
   
 If set up correctly and the DiscordsApp.Update() is correctly being called there should be no issues.
 

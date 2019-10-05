@@ -7,7 +7,7 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 [Discords Game SDK](https://discordapp.com/developers/docs/game-sdk/sdk-starter-guide)
 
 
-# Implementation Usage.
+# Implementation Usage #1.
 	1) Get the instance of the Extension -> DiscordsApp.GetApp()
 	
 	2) Set your ClientID -> DiscordsApp.GetApp().ClientId = 1231231231231231231
@@ -22,6 +22,9 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 	
 	7) To Stop the process set Stop to true, this will stop and reset the application.
   
+By default the extension will only detect a Discord Process upon launching  so if a user loads Discord post launch of the Client it will not process.
+To overcome this issue you may follow the implementation usage above from steps 3 to 6.
+
 # Implementation Usage #2.
 	1) Get the instance of the Extension -> DiscordsApp.GetApp()
 	
@@ -46,11 +49,7 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 	
 	7) To Stop the process set Stop to true, this will stop and reset the application.
 			
-  
-If set up correctly and the DiscordsApp.Update() is correctly being called there should be no issues.
-
-By default the extension will only detect a Discord Process upon launching  so if a user loads Discord post launch of the Client it will not process.
-To overcome this issue you may follow the implementation usage above from steps 3 to 6.
+As with the first usage, you will have to follow steps 4 to 7 to re-initilize the application extension.
 
 # The Parameters mentioned in step 4 are as followed.
 

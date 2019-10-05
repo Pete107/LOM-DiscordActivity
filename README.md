@@ -51,7 +51,7 @@ To overcome this issue you may follow the implementation usage above from steps 
 			
 As with the first usage, you will have to follow steps 4 to 6 to re-initilize the application extension.
 
-# The Parameters mentioned in step 4 are as followed.
+# The Parameters mentioned in step 5 are as followed.
 
 	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerCount, int)
 	DiscordsApp.GetApp().UpdateStage(StatusType.GameState, GameState.None)

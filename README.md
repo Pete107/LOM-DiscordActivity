@@ -49,7 +49,7 @@ To overcome this issue you may follow the implementation usage above from steps 
 	
 	7) To Stop the process set Stop to true, this will stop and reset the application.
 			
-As with the first usage, you will have to follow steps 4 to 7 to re-initilize the application extension.
+As with the first usage, you will have to follow steps 4 to 6 to re-initilize the application extension.
 
 # The Parameters mentioned in step 4 are as followed.
 

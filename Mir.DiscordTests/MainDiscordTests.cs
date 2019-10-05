@@ -43,10 +43,13 @@ namespace Mir.DiscordTests
             //Send to update Queue
             discord.UpdateActivity();
             var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+            //Start a loop in order to receive the callbacks
+            discord.StartLoop();
+            Assert.AreEqual(true, HasHit);
+            HasHit = false;
             //Create a loop to process the call-backs until there is a response (or it reaches the expire time)
             while (!HasHit && DateTime.UtcNow < expireTime)
             {
-                discord.Update();
             }
 
             Assert.AreEqual(true, HasHit);

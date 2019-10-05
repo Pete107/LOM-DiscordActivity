@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Mir.DiscordExtension.Properties;
 using Mir.DiscordExtension.SDK;
 using Newtonsoft.Json;
@@ -51,6 +53,7 @@ namespace Mir.DiscordExtension
             }
         }
 
+        private Activity _activity;
         private DateTime _startTime;
         private ActivityTimestamps _stamp;
         private ActivityParty _party;
@@ -96,19 +99,30 @@ namespace Mir.DiscordExtension
                     _partySize.CurrentSize = _currentState.CurrentPartyCount;
                     _partySize.MaxSize = _currentState.MaxPartyCount;
                     break;
-                case StatusType.SmallImageText:
-                    _currentState.UpdateSmallImageText((string)inputs[0]);
-                    _assets.SmallText = _currentState.SmallImageText;
-                    break;
-                case StatusType.LargeImageText:
-                    _currentState.UpdateLargeImageText((string)inputs[0]);
-                    _assets.LargeText = _currentState.LargeImageText;
-                    break;
                 case StatusType.PlayerName:
                     _currentState.UpdatePlayerName((string)inputs[0]);
                     break;
                 case StatusType.PlayerLevel:
                     _currentState.UpdatePlayerLevel((int)inputs[0]);
+                    break;
+                case StatusType.PlayerClass:
+                    _currentState.UpdatePlayersClass((string)inputs[0]);
+                    break;
+                case StatusType.SmallImage:
+                    _currentState.UpdateSmallImage((string)inputs[0]);
+                    _assets.SmallImage = (string) inputs[0];
+                    break;
+                case StatusType.SmallImageText:
+                    _currentState.UpdateSmallImageText((string)inputs[0]);
+                    _assets.SmallText = _currentState.SmallImageText;
+                    break;
+                case StatusType.LargeImage:
+                    _currentState.UpdateLargeImage((string)inputs[0]);
+                    _assets.LargeImage = (string) inputs[0];
+                    break;
+                case StatusType.LargeImageText:
+                    _currentState.UpdateLargeImageText((string)inputs[0]);
+                    _assets.LargeText = _currentState.LargeImageText;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(statusType), statusType, Resources.DiscordsApp_UpdateStage_Invalid_status_Type);
@@ -122,35 +136,19 @@ namespace Mir.DiscordExtension
         {
             try
             {
-                _currentState.Details = string.Format(_settings.DetailsFormatting, _currentState.PlayersName.Length > 0 && _settings.DisplayCharacterName ? _currentState.PlayersName + " " : "", 
-                    _currentState.PlayerLevel != - 1 ? $"Level: {_currentState.PlayerLevel} " : "",
-                    _currentState.PlayerCount != -1 ? $"UC:{_currentState.PlayerCount}" : "");
-                var activity = new Activity
-                {
-                    State = _currentState.State == GameState.Playing ? " Solo" : 
-                        _currentState.State == GameState.PlayingGroup ? "Playing": _currentState.State.ToString(),
-                    Details = _currentState.Details,
-                    Timestamps = _stamp
-                };
-                if (!string.IsNullOrEmpty(_assets.LargeImage) ||
-                    !string.IsNullOrEmpty(_assets.SmallImage))
-                {
-                    if (_currentState.SmallImageText.Length > 0)
-                        _assets.SmallText = _currentState.SmallImageText;
-                    if (_currentState.LargeImageText.Length > 0)
-                        _assets.LargeText = _currentState.LargeImageText;
-                    activity.Assets = _assets;
-                }
+                _activity.Details = string.Format(_settings.DetailsFormatting, 
+                    _currentState.PlayersName.Length > 0 && _settings.DisplayCharacterName ? 
+                        _currentState.PlayersName + " " : "",//0
+                    _currentState.PlayerLevel != -1 ? 
+                        $"Level: {_currentState.PlayerLevel} " : "",//1
+                    _currentState.PlayerCount != -1 ? 
+                        $"UC:{_currentState.PlayerCount}" : "");//2
+                SetState();
 
+                SetAssets();
 
-                if (_currentState.State == GameState.PlayingGroup &&
-                    _partySize.CurrentSize != -1 &&
-                    _partySize.MaxSize != -1)
-                {
-                    _party.Size = _partySize;
-                    activity.Party = _party;
-                }
-                _activityManager.UpdateActivity(activity, result =>
+                
+                _activityManager.UpdateActivity(_activity, result =>
                 {
                     if (result != Result.Ok)
                     {
@@ -168,6 +166,50 @@ namespace Mir.DiscordExtension
 #endif
                 OnException(e);
             }
+        }
+        private void SetState()
+        {
+            if (_settings.ShowGroup &&
+                _currentState.State == GameState.PlayingGroup)
+            {
+                _activity.State = _currentState.State.ToString();
+                _party.Size = _partySize;
+                _activity.Party = _party;
+            }
+            else if (!_settings.ShowGroup &&
+                     _currentState.State == GameState.PlayingGroup)
+            {
+                _activity.State = GameState.Playing + " Solo";
+                _activity.Party = default;
+            }
+            else if (_currentState.State == GameState.Playing)
+            {
+                _activity.State = _currentState.State + " Solo";
+                _activity.Party = default;
+            }
+            else
+            {
+                _activity.State = _currentState.State.ToString();
+                _activity.Party = default;
+            }
+        }
+        private void SetAssets()
+        {
+            if (_assets.LargeImage.Length > 0 &&
+                !string.Equals(_activity.Assets.LargeImage, _assets.LargeImage, StringComparison.CurrentCultureIgnoreCase))
+                _activity.Assets.LargeImage = _assets.LargeImage;
+            if (_assets.SmallImage.Length > 0 &&
+                !string.Equals(_activity.Assets.SmallImage, _assets.SmallImage,
+                    StringComparison.CurrentCultureIgnoreCase))
+                _activity.Assets.SmallImage = _assets.SmallImage;
+            if (_assets.SmallText.Length > 0 &&
+                !string.Equals(_activity.Assets.SmallText, _assets.SmallText,
+                    StringComparison.CurrentCultureIgnoreCase))
+                _activity.Assets.SmallText = _assets.SmallText;
+            if (_assets.LargeText.Length > 0 &&
+                !string.Equals(_activity.Assets.LargeText, _assets.LargeText,
+                    StringComparison.CurrentCultureIgnoreCase))
+                _activity.Assets.LargeText = _assets.LargeText;
         }
         /// <summary>
         /// Calling this will create a new session. Creates a new instance of <see cref="Discord"/>
@@ -242,6 +284,9 @@ namespace Mir.DiscordExtension
                     }
                 }
                 reason++;
+                _activity.Timestamps = _stamp;
+                _activity.Assets = _assets;
+                _activity.Party = _party;
                 Running = true;
                 OnStarted();
             }
@@ -271,7 +316,7 @@ namespace Mir.DiscordExtension
         /// <summary>
         /// Call this within a lifetime loop to ensure the Activity is updated.
         /// </summary>
-        public void Update()
+        private void Update()
         {
             if (!Running || _discord == null) return;
             try
@@ -288,6 +333,26 @@ namespace Mir.DiscordExtension
         }
         private bool CanLaunch() => 
             Process.GetProcessesByName("Discord").Length > 0;
+        public void StartLoop()
+        {
+            try
+            {
+                Task.Run(() =>
+                {
+                    while (Running)
+                    {
+                        Update();
+                        Thread.Sleep(500);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine(e);
+#endif
+            }
+        }
         /// <summary>
         /// 0: Discord not found | 1: Failed to create <see cref="Discord"/> instance | 2:Failed to get Activity Manager | 3: Failed to create <see cref="ActivityTimestamps"/> |
         /// 4: Failed to create <see cref="PartySize"/> | 5: Failed to create <see cref="ActivityParty"/> | 6: Failed to create <see cref="ActivityAssets"/>

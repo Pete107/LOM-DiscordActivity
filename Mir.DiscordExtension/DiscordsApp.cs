@@ -93,7 +93,7 @@ namespace Mir.DiscordExtension
                     _currentState.UpdatePlayerCount((int)inputs[0]);
                     break;
                 case StatusType.GameState:
-                    if (!(inputs[0] is int)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(GameState)}");
+                    if (!(inputs[0] is GameState)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(GameState)}");
                     _currentState.UpdateState((GameState)inputs[0]);
                     break;
                 case StatusType.Party:

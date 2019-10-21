@@ -42,8 +42,8 @@ namespace Mir.DiscordTests
             MockActivity.SetMockGroupActivity(discord);
             //Send to update Queue
             discord.UpdateActivity();
-            var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
             Assert.AreEqual(true, HasHit);
+            var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
             HasHit = false;
             //Create a loop to process the call-backs until there is a response (or it reaches the expire time)
             while (!HasHit && DateTime.UtcNow < expireTime)
@@ -53,8 +53,11 @@ namespace Mir.DiscordTests
             Assert.AreEqual(true, HasHit);
         }
 
-        private void DiscordOnStartedActivity(object sender, EventArgs e) =>
+        private void DiscordOnStartedActivity(object sender, EventArgs e)
+        {
+            HasHit = true;
             DiscordsApp.GetApp().StartLoop();
+        }
 
         public bool HasHit { get; set; }
 

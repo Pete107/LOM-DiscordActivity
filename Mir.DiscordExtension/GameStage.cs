@@ -32,7 +32,6 @@
         public GameStage(GameState state = GameState.None)
         {
             _playerCount = -1;
-            _details = string.Empty;
             _currentPartyCount = -1;
             _maxPartyCount = -1;
             _playersLevel = -1;

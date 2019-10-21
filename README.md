@@ -7,8 +7,8 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 [Discords Game SDK](https://discordapp.com/developers/docs/game-sdk/sdk-starter-guide)
 
 
-# Implementation Usage.
-	1a) Get the instance of the Extension -> DiscordsApp.GetApp()
+# Implementation Usage #1.
+	1) Get the instance of the Extension -> DiscordsApp.GetApp()
 	
 	2) Set your ClientID -> DiscordsApp.GetApp().ClientId = 1231231231231231231
   
@@ -22,12 +22,36 @@ Netonsoft.Json Reference for .NET Framework 4.5.2 (Can be found on NuGet)
 	
 	7) To Stop the process set Stop to true, this will stop and reset the application.
   
-If set up correctly and the DiscordsApp.Update() is correctly being called there should be no issues.
-
 By default the extension will only detect a Discord Process upon launching  so if a user loads Discord post launch of the Client it will not process.
 To overcome this issue you may follow the implementation usage above from steps 3 to 6.
 
-# The Parameters mentioned in step 4 are as followed.
+# Implementation Usage #2.
+	1) Get the instance of the Extension -> DiscordsApp.GetApp()
+	
+	2) Set your ClientID -> DiscordsApp.GetApp().ClientId = 1231231231231231231
+	
+	3) Subscribe to the Following Events:
+		DiscordsApp.GetApp().StartFailure
+		DiscordsApp.GetApp().Started
+		DiscordsApp.GetApp().HasException
+		DiscordsApp.GetApp().Stopped
+		DiscordsApp.GetApp().ActivityCallBack
+		
+	4) Within the Subscribed event for Started place DiscordsApp.GetApp().StartLoop()
+		Example :
+		discord.Started += DiscordOnStartedActivity;
+	        private void DiscordOnStartedActivity(object sender, EventArgs e) =>
+            		DiscordsApp.GetApp().StartLoop();
+			
+	5) Initialise the State, Example found further below -> DiscordsApp.GetApp().UpdateState(StatusType, parameters)
+  
+	6) Push the state to the Activity queue -> DiscordsApp.GetApp().UpdateActivity()
+	
+	7) To Stop the process set Stop to true, this will stop and reset the application.
+			
+As with the first usage, you will have to follow steps 4 to 6 to re-initilize the application extension.
+
+# The Parameters mentioned in step 5 are as followed.
 
 	DiscordsApp.GetApp().UpdateStage(StatusType.PlayerCount, int)
 	DiscordsApp.GetApp().UpdateStage(StatusType.GameState, GameState.None)

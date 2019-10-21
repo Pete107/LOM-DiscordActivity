@@ -89,38 +89,49 @@ namespace Mir.DiscordExtension
             switch (statusType)
             {
                 case StatusType.PlayerCount:
+                    if (!(inputs[0] is int)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(int)}");
                     _currentState.UpdatePlayerCount((int)inputs[0]);
                     break;
                 case StatusType.GameState:
+                    if (!(inputs[0] is int)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(GameState)}");
                     _currentState.UpdateState((GameState)inputs[0]);
                     break;
                 case StatusType.Party:
+                    if (!(inputs[0] is int)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(int)}");
+                    if (!(inputs[1] is int)) throw new ArgumentException($"Invalid cast, {inputs[1].GetType()} to {typeof(int)}");
                     _currentState.UpdateParty((int)inputs[0], (int)inputs[1]);
                     _partySize.CurrentSize = _currentState.CurrentPartyCount;
                     _partySize.MaxSize = _currentState.MaxPartyCount;
                     break;
                 case StatusType.PlayerName:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdatePlayerName((string)inputs[0]);
                     break;
                 case StatusType.PlayerLevel:
+                    if (!(inputs[0] is int)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(int)}");
                     _currentState.UpdatePlayerLevel((int)inputs[0]);
                     break;
                 case StatusType.PlayerClass:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdatePlayersClass((string)inputs[0]);
                     break;
                 case StatusType.SmallImage:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdateSmallImage((string)inputs[0]);
                     _assets.SmallImage = (string) inputs[0];
                     break;
                 case StatusType.SmallImageText:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdateSmallImageText((string)inputs[0]);
                     _assets.SmallText = _currentState.SmallImageText;
                     break;
                 case StatusType.LargeImage:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdateLargeImage((string)inputs[0]);
                     _assets.LargeImage = (string) inputs[0];
                     break;
                 case StatusType.LargeImageText:
+                    if (!(inputs[0] is string)) throw new ArgumentException($"Invalid cast, {inputs[0].GetType()} to {typeof(string)}");
                     _currentState.UpdateLargeImageText((string)inputs[0]);
                     _assets.LargeText = _currentState.LargeImageText;
                     break;
@@ -136,13 +147,21 @@ namespace Mir.DiscordExtension
         {
             try
             {
-                _activity.Details = string.Format(_settings.DetailsFormatting, 
-                    _currentState.PlayersName.Length > 0 && _settings.DisplayCharacterName ? 
+                if (_currentState.State == GameState.Playing ||
+                    _currentState.State == GameState.PlayingGroup)
+                {
+                    _activity.Details = string.Format(_settings.DetailsFormatting,
+                    !string.IsNullOrEmpty(_currentState.PlayersName) && _settings.DisplayCharacterName ? 
                         _currentState.PlayersName + " " : "",//0
                     _currentState.PlayerLevel != -1 ? 
                         $"Level: {_currentState.PlayerLevel} " : "",//1
                     _currentState.PlayerCount != -1 ? 
                         $"UC:{_currentState.PlayerCount}" : "");//2
+                }
+                else
+                {
+                    _activity.Details = "";
+                }
                 SetState();
 
                 SetAssets();
@@ -169,47 +188,67 @@ namespace Mir.DiscordExtension
         }
         private void SetState()
         {
-            if (_settings.ShowGroup &&
-                _currentState.State == GameState.PlayingGroup)
+            try
             {
-                _activity.State = _currentState.State.ToString();
-                _party.Size = _partySize;
-                _activity.Party = _party;
+                if (_settings.ShowGroup &&
+                    _currentState.State == GameState.PlayingGroup)
+                {
+                    _activity.State = _currentState.State.ToString();
+                    _party.Size = _partySize;
+                    _activity.Party = _party;
+                }
+                else if (!_settings.ShowGroup &&
+                         _currentState.State == GameState.PlayingGroup)
+                {
+                    _activity.State = GameState.Playing + " Solo";
+                    _activity.Party = default;
+                }
+                else if (_currentState.State == GameState.Playing)
+                {
+                    _activity.State = _currentState.State + " Solo";
+                    _activity.Party = default;
+                }
+                else
+                {
+                    _activity.State = _currentState.State.ToString();
+                    _activity.Party = default;
+                }
             }
-            else if (!_settings.ShowGroup &&
-                     _currentState.State == GameState.PlayingGroup)
+            catch (Exception e)
             {
-                _activity.State = GameState.Playing + " Solo";
-                _activity.Party = default;
-            }
-            else if (_currentState.State == GameState.Playing)
-            {
-                _activity.State = _currentState.State + " Solo";
-                _activity.Party = default;
-            }
-            else
-            {
-                _activity.State = _currentState.State.ToString();
-                _activity.Party = default;
+#if DEBUG
+                Console.WriteLine(e);
+#endif
+                OnException(e);
             }
         }
         private void SetAssets()
         {
-            if (_assets.LargeImage.Length > 0 &&
-                !string.Equals(_activity.Assets.LargeImage, _assets.LargeImage, StringComparison.CurrentCultureIgnoreCase))
-                _activity.Assets.LargeImage = _assets.LargeImage;
-            if (_assets.SmallImage.Length > 0 &&
-                !string.Equals(_activity.Assets.SmallImage, _assets.SmallImage,
-                    StringComparison.CurrentCultureIgnoreCase))
-                _activity.Assets.SmallImage = _assets.SmallImage;
-            if (_assets.SmallText.Length > 0 &&
-                !string.Equals(_activity.Assets.SmallText, _assets.SmallText,
-                    StringComparison.CurrentCultureIgnoreCase))
-                _activity.Assets.SmallText = _assets.SmallText;
-            if (_assets.LargeText.Length > 0 &&
-                !string.Equals(_activity.Assets.LargeText, _assets.LargeText,
-                    StringComparison.CurrentCultureIgnoreCase))
-                _activity.Assets.LargeText = _assets.LargeText;
+            try
+            {
+                if (!string.IsNullOrEmpty(_assets.LargeImage) &&
+                    !string.Equals(_activity.Assets.LargeImage, _assets.LargeImage, StringComparison.CurrentCultureIgnoreCase))
+                    _activity.Assets.LargeImage = _assets.LargeImage;
+                if (!string.IsNullOrEmpty(_assets.SmallImage) &&
+                    !string.Equals(_activity.Assets.SmallImage, _assets.SmallImage,
+                        StringComparison.CurrentCultureIgnoreCase))
+                    _activity.Assets.SmallImage = _assets.SmallImage;
+                if (!string.IsNullOrEmpty(_assets.SmallText) &&
+                    !string.Equals(_activity.Assets.SmallText, _assets.SmallText,
+                        StringComparison.CurrentCultureIgnoreCase))
+                    _activity.Assets.SmallText = _assets.SmallText;
+                if (!string.IsNullOrEmpty(_assets.LargeText) &&
+                    !string.Equals(_activity.Assets.LargeText, _assets.LargeText,
+                        StringComparison.CurrentCultureIgnoreCase))
+                    _activity.Assets.LargeText = _assets.LargeText;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine(e);
+#endif
+                OnException(e);
+            }
         }
         /// <summary>
         /// Calling this will create a new session. Creates a new instance of <see cref="Discord"/>
@@ -351,6 +390,7 @@ namespace Mir.DiscordExtension
 #if DEBUG
                 Console.WriteLine(e);
 #endif
+                OnException(e);
             }
         }
         /// <summary>

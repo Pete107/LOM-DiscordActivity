@@ -14,7 +14,7 @@ namespace Mir.DiscordTests
             var discord = DiscordsApp.GetApp();
             discord.ClientId = 2312323123123123123;
             discord.StartFailure += DiscordOnStartFailure;
-            discord.Started += DiscordOnStarted;
+            discord.Started += DiscordOnStartedActivity;
             discord.HasException += DiscordOnHasException;
             discord.Stopped += DiscordOnStopped;
             discord.StartApp();
@@ -33,7 +33,7 @@ namespace Mir.DiscordTests
             var discord = DiscordsApp.GetApp();
             discord.ClientId = 2312323123123123123;
             discord.StartFailure += DiscordOnStartFailure;
-            discord.Started += DiscordOnStarted;
+            discord.Started += DiscordOnStartedActivity;
             discord.HasException += DiscordOnHasException;
             discord.Stopped += DiscordOnStopped;
             discord.ActivityCallBack += DiscordOnActivityCallBack;
@@ -43,8 +43,6 @@ namespace Mir.DiscordTests
             //Send to update Queue
             discord.UpdateActivity();
             var expireTime = DateTime.UtcNow + TimeSpan.FromSeconds(10);
-            //Start a loop in order to receive the callbacks
-            discord.StartLoop();
             Assert.AreEqual(true, HasHit);
             HasHit = false;
             //Create a loop to process the call-backs until there is a response (or it reaches the expire time)
@@ -54,6 +52,9 @@ namespace Mir.DiscordTests
 
             Assert.AreEqual(true, HasHit);
         }
+
+        private void DiscordOnStartedActivity(object sender, EventArgs e) =>
+            DiscordsApp.GetApp().StartLoop();
 
         public bool HasHit { get; set; }
 

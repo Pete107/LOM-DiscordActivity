@@ -91,3 +91,13 @@ Setting EnableDiscordActivity will prevent the extension from processing. (won't
 {1} is the Level of the user
 
 {2} is the User count of the server (if set)
+
+
+# Troubleshooting
+
+Error : System.DllNotFoundException: Unable to load DLL 'discord_game_sdk': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+Solution : Ensure the discord_game_sdk.dll is deployed with the executable.
+
+Error : System.BadImageFormatException: An attempt was made to load a program with an incorrect format. (Exception from HRESULT: 0x8007000B)
+Solution : This is caused by using the incorrect discord_game_sdk.dll, ensure you deploy the correct SDK .dll with your application (x86 or x86_64) 
+
